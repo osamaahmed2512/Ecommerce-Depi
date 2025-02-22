@@ -29,7 +29,7 @@ This is a **full-stack eCommerce application** built using **Angular** for the f
 ### **Backend (.NET Core API)**
 1. **Clone the Repository:**
    ```sh
-   git clone https://github.com/your-repo/angular-dotnet-ecommerce.git
+   git clone https://github.com/andrew-atef/eCommerce-dpei.git
    cd backend
    ```
 2. **Setup Database:**
