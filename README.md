@@ -73,8 +73,8 @@ This is a **full-stack eCommerce application** built using **Angular** for the f
 ## License
 This project is licensed under the **MIT License**.
 
-## Contributors
-- [Your Name](https://github.com/your-profile)
+<!-- ## Contributors
+- [Your Name](https://github.com/your-profile) -->
 
 ## Contact
 For questions, feel free to reach out via **email** or open an **issue** in the repository.
