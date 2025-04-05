@@ -1,0 +1,6 @@
+@eCommerce_dpei_HostAddress = http://localhost:5128
+
+GET {{eCommerce_dpei_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
