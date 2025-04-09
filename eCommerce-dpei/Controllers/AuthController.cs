@@ -28,7 +28,11 @@ namespace EcommerceApi.Controllers
         {
             try
             {
-                // Check if email already exists
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); 
+                }
+
                 if (_context.Customers.Any(c => c.Email == dto.Email))
                 {
                     return BadRequest(new { Message = "Email already in use" });
@@ -53,13 +57,16 @@ namespace EcommerceApi.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             try
             {
-                // Check customer
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState); // Returns validation errors
+                }
+
                 var customer = _context.Customers.FirstOrDefault(c => c.Email == dto.Email);
                 if (customer != null && BCrypt.Net.BCrypt.Verify(dto.Password, customer.Password))
                 {
@@ -67,7 +74,6 @@ namespace EcommerceApi.Controllers
                     return Ok(new { Token = token });
                 }
 
-                // Check admin
                 var admin = _context.Admins.FirstOrDefault(a => a.Email == dto.Email);
                 if (admin != null && BCrypt.Net.BCrypt.Verify(dto.Password, admin.Password))
                 {
@@ -105,17 +111,15 @@ namespace EcommerceApi.Controllers
         }
 
         [HttpGet("me")]
-        [Authorize] // Requires the user to be authenticated (have a valid JWT)
+        [Authorize] 
         public async Task<IActionResult> GetCurrentUser()
         {
-            // Get the user's ID from the JWT claim
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
             {
                 return BadRequest(new { Message = "Invalid user ID claim." });
             }
 
-            // Get the user's role from the JWT claim
             var userRoleClaim = User.FindFirst(ClaimTypes.Role);
             if (userRoleClaim == null)
             {
@@ -124,7 +128,6 @@ namespace EcommerceApi.Controllers
             var userRole = userRoleClaim.Value;
 
 
-            // Fetch the user from the database based on the ID and role
             object user = null;
             try
             {
@@ -146,7 +149,7 @@ namespace EcommerceApi.Controllers
                     return NotFound(new { Message = "User not found." });
                 }
 
-                return Ok(user); // Return the user object
+                return Ok(user); 
             }
             catch (Exception ex)
             {
