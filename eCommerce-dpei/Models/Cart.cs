@@ -1,18 +1,16 @@
-﻿namespace eCommerce_dpei.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace eCommerce_dpei.Models
 {
-    public class Order
+    public class Cart
     {
         public int Id { get; set; }
         public int CustomerId { get; set; }
-        public int AddressId { get; set; }
-        public decimal TotalPrice { get; set; }
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public DateTime AddedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
-        public string Status { get; set; } = "pending";
-        public string? ShippingTrackingNumber { get; set; }
         public Customer Customer { get; set; }
-        public CustomerAddress Address { get; set; }
-        public ICollection<OrderItem> OrderItems { get; set; }
-        public Payment? Payment { get; set; }
+        public Product Product { get; set; }
     }
 }

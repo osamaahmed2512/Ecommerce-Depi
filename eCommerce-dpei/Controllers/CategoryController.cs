@@ -1,5 +1,7 @@
+using AutoMapper;
 using eCommerce_dpei.Data;
 using eCommerce_dpei.Models;
+using eCommerce_dpei.repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,18 +12,26 @@ namespace eCommerce_dpei.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly EcommerceContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CategoryController(EcommerceContext context)
+        public CategoryController(EcommerceContext context, IMapper mapper ,IUnitOfWork unitOfWork)
         {
             _context = context;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public async Task<IActionResult> GetAllCategories()
         {
             try
             {
-                var categories = _context.Categories.ToList();
+                var categories =await _unitOfWork.category.GetAllAsync();
+                if (categories == null)
+                {
+                    return NotFound("no categories found");
+                }
                 return Ok(categories); 
             }
             catch (Exception ex)
@@ -54,15 +64,17 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var category = new Category
-                {
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    ParentId = dto.ParentId,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsActive = true
-                };
+                //var category = new Category
+                //{
+                //    Name = dto.Name,
+                //    Description = dto.Description,
+                //    ParentId = dto.ParentId,
+                //    CreatedAt = DateTime.Now,
+                //    UpdatedAt = DateTime.Now,
+                //    IsActive = true
+                //};
+                var category = _mapper.Map<Category>(dto);
+                   
 
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
