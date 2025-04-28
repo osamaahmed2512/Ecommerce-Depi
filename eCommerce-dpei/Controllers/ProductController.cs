@@ -1,5 +1,7 @@
 ﻿using eCommerce_dpei.Data;
+using eCommerce_dpei.Filters;
 using eCommerce_dpei.Models;
+using eCommerce_dpei.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,13 +9,13 @@ namespace eCommerce_dpei.Controllers
 {
     [Route("api/products")]
     [ApiController]
+    [ServiceFilter(typeof(ValidatorFilter))]
     public class ProductController : ControllerBase
     {
-        private readonly EcommerceContext _context;
-
-        public ProductController(EcommerceContext context)
+        private readonly IProductRepository _productRepository;
+        public ProductController( IProductRepository productRepository)
         {
-            _context = context;
+            _productRepository = productRepository;
         }
 
         [HttpGet]
@@ -21,7 +23,9 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var products = _context.Products.ToList();
+                var products = _productRepository.GetAllProducts();
+                if (products == null) 
+                    return NotFound("Message Product Not Found");
                 return Ok(products);
             }
             catch (Exception ex)
@@ -35,7 +39,7 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var product = _context.Products.Find(id);
+                var product = _productRepository.GetProduct(id);
                 if (product == null)
                 {
                     return NotFound(new { Message = "Product not found" });
@@ -56,33 +60,15 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState); // Returns validation errors
-                }
-
-                // Check if CategoryId exists
-                if (!_context.Categories.Any(c => c.Id == dto.CategoryId))
+                if (!_productRepository.isCategoryExist(dto.CategoryId))
                 {
                     return BadRequest(new { Message = "Invalid CategoryId: Category does not exist" });
                 }
-
-                var product = new Product
-                {
-                    CategoryId = dto.CategoryId,
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    Price = dto.Price,
-                    Stock = dto.Stock,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                    IsActive = true
-                };
-
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-
+                var product = _productRepository.CreateProduct(dto);
+                
                 return Ok(new { Message = "Product created successfully", ProductId = product.Id });
+
+
             }
             catch (Exception ex)
             {
@@ -96,32 +82,12 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
+                var success = await _productRepository.UpdateProduct(id, dto);
 
-                var product = _context.Products.Find(id);
-                if (product == null)
-                {
-                    return NotFound(new { Message = "Product not found" });
-                }
-
-                if (!_context.Categories.Any(c => c.Id == dto.CategoryId))
-                {
-                    return BadRequest(new { Message = "Invalid CategoryId: Category does not exist" });
-                }
-
-                product.CategoryId = dto.CategoryId;
-                product.Name = dto.Name;
-                product.Description = dto.Description;
-                product.Price = dto.Price;
-                product.Stock = dto.Stock;
-                product.UpdatedAt = DateTime.Now;
-
-                await _context.SaveChangesAsync();
-
+                if (!success) 
+                    return NotFound(new { Message = "Product not found or invalid category." });
                 return Ok(new { Message = "Product updated successfully" });
+
             }
             catch (Exception ex)
             {
@@ -136,14 +102,11 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var product = _context.Products.Find(id);
+                var product =await _productRepository.DeleteProduct(id);
                 if (product == null)
                 {
                     return NotFound(new { Message = "Product not found" });
                 }
-
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
 
                 return Ok(new { Message = "Product deleted successfully" });
             }

@@ -1,7 +1,6 @@
-using AutoMapper;
-using eCommerce_dpei.Data;
+using eCommerce_dpei.Filters;
 using eCommerce_dpei.Models;
-using eCommerce_dpei.repository;
+using eCommerce_dpei.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,25 +8,22 @@ namespace eCommerce_dpei.Controllers
 {
     [Route("api/categories")]
     [ApiController]
+    [ServiceFilter(typeof(ValidatorFilter))]
     public class CategoryController : ControllerBase
     {
-        private readonly EcommerceContext _context;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly ICategoryRepository _Repository;
 
-        public CategoryController(EcommerceContext context, IMapper mapper ,IUnitOfWork unitOfWork)
+        public CategoryController(ICategoryRepository Repository)
         {
-            _context = context;
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            _Repository = Repository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public  IActionResult GetAllCategories()
         {
             try
             {
-                var categories =await _unitOfWork.category.GetAllAsync();
+                var categories = _Repository.GetAll();
                 if (categories == null)
                 {
                     return NotFound("no categories found");
@@ -45,7 +41,7 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var category = _context.Categories.Find(id);
+                var category = _Repository.Get(id);
                 if (category == null)
                 {
                     return NotFound(new { Message = "Category not found" });
@@ -64,26 +60,11 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                //var category = new Category
-                //{
-                //    Name = dto.Name,
-                //    Description = dto.Description,
-                //    ParentId = dto.ParentId,
-                //    CreatedAt = DateTime.Now,
-                //    UpdatedAt = DateTime.Now,
-                //    IsActive = true
-                //};
-                var category = _mapper.Map<Category>(dto);
-                   
-
-                _context.Categories.Add(category);
-                await _context.SaveChangesAsync();
-
+                var category = _Repository.Create(dto);
                 return Ok(new { Message = "Category created successfully", CategoryId = category.Id });
             }
             catch (Exception ex)
             {
-                // Include inner exception details
                 return BadRequest(new { Message = "Error creating category: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
             }
         }
@@ -94,18 +75,11 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var category = _context.Categories.Find(id);
-                if (category == null)
+                var success =await _Repository.Update(id,dto);
+                if (!success )
                 {
                     return NotFound(new { Message = "Category not found" });
                 }
-
-                category.Name = dto.Name;
-                category.Description = dto.Description;
-                category.ParentId = dto.ParentId;
-                category.UpdatedAt = DateTime.Now;
-
-                await _context.SaveChangesAsync();
 
                 return Ok(new { Message = "Category updated successfully" });
             }
@@ -121,15 +95,11 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var category = _context.Categories.Find(id);
+                var category =await _Repository.Delete(id);
                 if (category == null)
                 {
                     return NotFound(new { Message = "Category not found" });
                 }
-
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
-
                 return Ok(new { Message = "Category deleted successfully" });
             }
             catch (Exception ex)

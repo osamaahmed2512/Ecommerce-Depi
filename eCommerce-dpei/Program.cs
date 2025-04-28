@@ -5,13 +5,20 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using eCommerce_dpei.repository;
-using eCommerce_dpei.Models; // Add this import
+using eCommerce_dpei.Models;
+using eCommerce_dpei.Filters;
+using eCommerce_dpei.Services; // Add this import
 //using Swashbuckle.AspNetCore.Filters; //not used
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Replace it with:
-builder.Services.AddControllers()
+builder.Services.AddControllers().
+              ConfigureApiBehaviorOptions(options =>
+              {
+                 options.SuppressModelStateInvalidFilter = true;
+              }
+                )
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
@@ -24,6 +31,10 @@ builder.Services.AddDbContext<EcommerceContext>(options =>
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
 builder.Services.AddAutoMapper(typeof(Program));
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -51,7 +62,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
-
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+builder.Services.AddScoped<ValidatorFilter>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>

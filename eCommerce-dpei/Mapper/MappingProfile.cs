@@ -19,6 +19,23 @@ namespace eCommerce_dpei.Mapper
            
             CreateMap<CartUpdateDto, Cart>().
                ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<AddressCreateDto, CustomerAddress>()
+              .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+              .ForMember(dest => dest.CustomerId, opt => opt.Ignore());
+
+            CreateMap<AddressCreateDto, CustomerAddress>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.CustomerId, opt => opt.Ignore());
+
+            CreateMap<AddressUpdateDto, CustomerAddress>()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) =>
+                    srcMember != null &&
+                    dest.GetType().GetProperty(opts.DestinationMember.Name) != null));
+
+            CreateMap<CustomerAddress, AddressDto>();
+            CreateMap<AddressDto, CustomerAddress>();
         }
     }
 }

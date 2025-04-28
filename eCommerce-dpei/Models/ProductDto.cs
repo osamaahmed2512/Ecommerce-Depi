@@ -20,7 +20,7 @@ namespace eCommerce_dpei.Models
         public decimal Price { get; set; }
 
         [Required(ErrorMessage = "Stock is required")]
-        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
+        [Range(1, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
         public int Stock { get; set; }
     }
 }

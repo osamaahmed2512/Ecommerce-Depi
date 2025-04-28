@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using eCommerce_dpei.Data;
 using eCommerce_dpei.DTOS;
+using eCommerce_dpei.Filters;
 using eCommerce_dpei.Models;
 using eCommerce_dpei.repository;
+using eCommerce_dpei.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +15,19 @@ namespace eCommerce_dpei.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ServiceFilter(typeof(ValidatorFilter))]
     public class CartController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
-        public CartController(IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly ICartRepository _repository;
+        private readonly EcommerceContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        public CartController(ICartRepository repository, IMapper mapper, EcommerceContext context , IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _repository = repository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _context = context;
         }
 
         [HttpPost]
@@ -28,47 +35,19 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                
-                var product = await _unitOfWork.Products.GetByIdasync(dto.ProductId);
+                var product = _context.Products.Find(dto.ProductId);
                 if (product == null)
                 {
                     return NotFound(new { Message = "Product not found" });
-                }
-
-                if (!product.IsActive)
-                {
-                    return BadRequest(new { Message = "Product is not available" });
                 }
 
                 if (product.Stock < dto.Quantity)
                 {
                     return BadRequest(new { Message = $"Not enough stock available. Current stock: {product.Stock}" });
                 }
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-                var existingCartItem = await _unitOfWork.Cart
-                    .FirstOrDefaultAsync(c => c.CustomerId == userId && c.ProductId == dto.ProductId);
-
-                if (existingCartItem != null)
-                {
-                    existingCartItem.Quantity += dto.Quantity;
-                    existingCartItem.UpdatedAt = DateTime.Now;
-                    _unitOfWork.Cart.Update(existingCartItem);
-                }
-                else
-                {
-
-                    var CartItem = _mapper.Map<Cart>(dto);
-                    CartItem.CustomerId = userId;
-                    await _unitOfWork.Cart.AddAsync(CartItem);
-                }
-
-                 _unitOfWork.Complete();
+                var existingCartItem = await _repository.Create(dto, userId);
                 return Ok(new { Message = "Item added to cart successfully" });
             }
             catch (Exception ex)
@@ -83,9 +62,11 @@ namespace eCommerce_dpei.Controllers
             try
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                var cartItems = await _unitOfWork.Cart
-                    .FindAsync(c => c.CustomerId == userId);
-
+                var cartItems = await _repository.Get(c => c.CustomerId == userId);
+                if ( cartItems == null)
+                {
+                    return NotFound(new { Message = "Cart not found" });
+                }
                 return Ok(cartItems);
             }
             catch (Exception ex)
@@ -94,25 +75,19 @@ namespace eCommerce_dpei.Controllers
             }
         }
         [HttpPut("{productId}")]
-        public async Task<IActionResult> UpdateCartItem(int productId,[FromBody] CartUpdateDto dto)
+        public async Task<IActionResult> UpdateCartItem(int productId, [FromBody] CartUpdateDto dto)
         {
             try
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                var product = await _unitOfWork.Products.GetByIdasync(productId);
-                var cartItem = await _unitOfWork.Cart
-                    .FirstOrDefaultAsync(c => c.CustomerId == userId && c.ProductId == productId);
 
-                if (cartItem == null)
+
+                var cartItem = await _repository.Update(productId, userId, dto);
+                if (! cartItem)
                 {
-                    return NotFound(new { Message = "Cart item not found" });
+                    return NotFound(new { Message = "Cart item not found or product quantity more than staock" });
                 }
 
-                _mapper.Map(dto, cartItem);
-                if (cartItem.Quantity>product.Stock)
-                    return BadRequest(new { Message = $"Not enough stock available. Current stock: {product.Stock}" });
-                _unitOfWork.Cart.Update(cartItem);
-                 _unitOfWork.Complete();
 
                 return Ok(new { Message = "Cart item updated successfully" });
             }
@@ -127,16 +102,12 @@ namespace eCommerce_dpei.Controllers
             try
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                var cartItem = await _unitOfWork.Cart
-                    .FirstOrDefaultAsync(c => c.CustomerId == userId && c.ProductId == productId);
+                var cartItem =await _repository.Delete(productId,userId);
 
                 if (cartItem == null)
                 {
                     return NotFound(new { Message = "Cart item not found" });
                 }
-
-                _unitOfWork.Cart.Remove(cartItem);
-                 _unitOfWork.Complete();
 
                 return Ok(new { Message = "Item removed from cart successfully" });
             }
