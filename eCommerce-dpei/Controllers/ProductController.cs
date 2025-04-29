@@ -56,7 +56,8 @@ namespace eCommerce_dpei.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateProduct([FromBody] ProductDto dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateProduct([FromForm] ProductDto dto)
         {
             try
             {
@@ -64,7 +65,7 @@ namespace eCommerce_dpei.Controllers
                 {
                     return BadRequest(new { Message = "Invalid CategoryId: Category does not exist" });
                 }
-                var product = _productRepository.CreateProduct(dto);
+                var product =await _productRepository.CreateProduct(dto);
                 
                 return Ok(new { Message = "Product created successfully", ProductId = product.Id });
 

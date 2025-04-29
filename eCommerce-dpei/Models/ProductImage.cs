@@ -8,7 +8,7 @@
         public bool IsPrimary { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        // Navigation property
+       
         public Product Product { get; set; }
     }
 }

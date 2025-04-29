@@ -115,7 +115,7 @@ app.UseCors("AllowSwagger");
 // Middleware pipeline (order matters: Authentication -> Authorization -> Routing)
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();

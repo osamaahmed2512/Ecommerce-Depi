@@ -22,5 +22,8 @@ namespace eCommerce_dpei.Models
         [Required(ErrorMessage = "Stock is required")]
         [Range(1, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
         public int Stock { get; set; }
+
+        [Required(ErrorMessage ="image is required")]
+        public List<IFormFile>? Images { get; set; }
     }
 }

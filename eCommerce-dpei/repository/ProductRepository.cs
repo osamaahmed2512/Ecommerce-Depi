@@ -23,7 +23,7 @@ namespace eCommerce_dpei.repository
         {
             return _context.Products.Find(Id);
         }
-        public async Task CreateProduct([FromBody] ProductDto dto)
+        public async Task<Product> CreateProduct([FromBody] ProductDto dto)
         {
             var product = new Product
             {
@@ -38,7 +38,39 @@ namespace eCommerce_dpei.repository
             };
 
             _context.Products.Add(product);
-            await _context.SaveChangesAsync();           
+            await _context.SaveChangesAsync();
+            if (dto.Images != null && dto.Images.Count > 0)
+            {
+                foreach (var image in dto.Images)
+                {
+                    var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(image.FileName)}";
+                    var savePath = Path.Combine("wwwroot/images/products", fileName);
+
+
+                    var directory = Path.GetDirectoryName(savePath);
+                    if (!Directory.Exists(directory))
+                        Directory.CreateDirectory(directory);
+
+                    using (var stream = new FileStream(savePath, FileMode.Create))
+                    {
+                        await image.CopyToAsync(stream);
+                    }
+
+                    var productImage = new ProductImage
+                    {
+                        ProductId = product.Id,
+                        ImageUrl = $"/images/products/{fileName}",
+                        IsPrimary = false,
+                        CreatedAt = DateTime.Now
+                    };
+
+                    _context.ProductImages.Add(productImage);
+                    await _context.SaveChangesAsync();
+                }
+
+                
+            }
+           return product;
         }
 
         public async Task<Product> GetProduct(int id)
