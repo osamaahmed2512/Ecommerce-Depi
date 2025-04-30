@@ -19,13 +19,13 @@ namespace eCommerce_dpei.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllProducts()
+        public IActionResult GetAllProducts([FromQuery] int pageNumber=1 ,[FromQuery] int pagesize =10)
         {
             try
             {
-                var products = _productRepository.GetAllProducts();
+                var products = _productRepository.GetAllProducts(pageNumber,pagesize);
                 if (products == null) 
-                    return NotFound("Message Product Not Found");
+                    return NotFound(" Product Not Found");
                 return Ok(products);
             }
             catch (Exception ex)

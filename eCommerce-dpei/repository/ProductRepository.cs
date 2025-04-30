@@ -1,4 +1,5 @@
 ﻿using eCommerce_dpei.Data;
+using eCommerce_dpei.DTOS;
 using eCommerce_dpei.Migrations;
 using eCommerce_dpei.Models;
 using eCommerce_dpei.Services;
@@ -95,12 +96,20 @@ namespace eCommerce_dpei.repository
             return product;
         }
 
-        public List<Product>? GetAllProducts()
+        public PaginatedProductsDto GetAllProducts(int pagenumber , int pagesize)
         {
-            var products = _context.Products.ToList();
-          if (products == null)
-                return null;
-          return products;
+            var query = _context.Products.Include(x => x.Images);
+            var totalCount = query.Count();
+            var products = query
+              .Skip((pagenumber - 1) * pagesize)
+                   .Take(pagesize)
+                      .ToList();
+
+            return new PaginatedProductsDto
+            {
+                TotalCount = totalCount,
+                Products = products
+            };
         }
 
 

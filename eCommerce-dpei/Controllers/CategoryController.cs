@@ -60,7 +60,7 @@ namespace eCommerce_dpei.Controllers
         {
             try
             {
-                var category = _Repository.Create(dto);
+                var category =await _Repository.Create(dto);
                 return Ok(new { Message = "Category created successfully", CategoryId = category.Id });
             }
             catch (Exception ex)
