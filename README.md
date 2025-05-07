@@ -1,171 +1,179 @@
-eCommerce_dpei API
-Overview
-The eCommerce_dpei API is a robust backend solution for an e-commerce platform built using ASP.NET Core. It provides comprehensive functionality for managing users, products, categories, carts, orders, addresses, and checkout processes. The API incorporates secure authentication and authorization using JWT (JSON Web Tokens) and password hashing with BCrypt. It supports role-based access control, distinguishing between Customer and Admin roles.
-Features
-User Authentication & Authorization
+# 🛒 eCommerce_dpei API
 
-Customer registration and login with JWT-based authentication.
-Role-based access for Customers and Admins.
-Secure password storage using BCrypt.
-Endpoint to retrieve current user details (GET /api/auth/me).
+The **eCommerce_dpei API** is a robust backend solution for an e-commerce platform built with **ASP.NET Core**. It provides comprehensive features for managing users, products, categories, carts, orders, addresses, and the checkout process.
 
-Product Management
+---
 
-CRUD operations for products (GET, POST, PUT, DELETE).
-Pagination support for listing products (GET /api/products).
-Admin-only access for creating, updating, and deleting products.
-Product image management (POST /api/products/{productId}/images, DELETE /api/images/{imageId}).
+## 🚀 Features
 
-Category Management
+### 🔐 Authentication & Authorization
+- Customer registration and login via **JWT**
+- **Role-based access** for Customers and Admins
+- Secure password hashing with **BCrypt**
+- Retrieve current user info: `GET /api/auth/me`
 
-CRUD operations for categories (GET, POST, PUT, DELETE).
-Admin-only access for creating, updating, and deleting categories.
+### 📦 Product Management
+- Full **CRUD** support: `GET`, `POST`, `PUT`, `DELETE`
+- Pagination: `GET /api/products?pageNumber=1&pageSize=10`
+- Admin-only access for product changes
+- Product image upload and delete
 
-Cart Management
+### 🗂️ Category Management
+- Full CRUD for product categories
+- Admin-only access for create, update, delete
 
-Add, update, and remove items from the cart (POST, PUT, DELETE).
-Retrieve cart contents (GET /api/cart).
-Stock validation to prevent adding unavailable quantities.
+### 🛒 Cart Management
+- Add, update, remove items from cart
+- Retrieve current cart contents
+- Stock validation on item addition
 
-Order Management
+### 📬 Address Management
+- Add, edit, delete addresses
+- Set default address
 
-Create and cancel orders (POST /api/order, PUT /api/order/{id}/cancel).
-Retrieve user orders or specific order details (GET /api/order, GET /api/order/{id}).
-Admin-only endpoints to view all orders and update order status (GET /api/order/admin, PUT /api/order/admin/{id}/status).
-Automatic stock updates upon order creation or cancellation.
+### 📦 Order Management
+- Create and cancel orders
+- Retrieve personal or admin-level orders
+- Admin-only order status management
+- Auto stock updates on order changes
 
-Address Management
+### 💳 Checkout
+- View cart summary and shipping addresses
+- Process orders from cart
 
-CRUD operations for user addresses (GET, POST, PUT, DELETE).
-Set default address (PUT /api/address/{id}/default).
+---
 
-Checkout Process
+## 🛠️ Technologies Used
 
-Retrieve cart summary and shipping addresses (GET /api/checkout/cart-summary, GET /api/checkout/shipping-addresses).
-Process checkout to create orders (POST /api/checkout/process).
+- **Framework**: ASP.NET Core
+- **Database**: Entity Framework Core (EcommerceContext)
+- **Authentication**: JWT, BCrypt.Net
+- **DI**: ASP.NET Core built-in
+- **Data Mapping**: AutoMapper
+- **Validation**: Custom `ValidatorFilter`
+- **Architecture**: Repository Pattern + IUnitOfWork
+- **File Upload**: Multipart form-data for product images
 
-Technologies Used
+---
 
-Framework: ASP.NET Core
-Database: Entity Framework Core (with EcommerceContext)
-Authentication: JWT, BCrypt.Net
-Dependency Injection: Built-in ASP.NET Core DI
-Data Mapping: AutoMapper
-Validation: Custom ValidatorFilter for input validation
-Repository Pattern: Used with IUnitOfWork for data access
-File Upload: Multipart form-data for product images
+## 📋 Prerequisites
 
-Prerequisites
+- **.NET SDK**: v6.0 or later
+- **Database**: SQL Server (or EF Core compatible)
+- **Configuration**:
+  - Set `Jwt:Key`, `Jwt:Issuer`, `Jwt:Audience` in `appsettings.json`
+  - Configure connection string
 
-.NET SDK: Version 6.0 or later
-Database: SQL Server or any database compatible with EF Core
-Configuration:
-Update appsettings.json with JWT settings (Jwt:Key, Jwt:Issuer, Jwt:Audience).
-Configure database connection string in appsettings.json.
+---
 
+## ⚙️ Setup Instructions
 
-
-Setup Instructions
-
-Clone the Repository:
+1. **Clone the repository**  
+```bash
 git clone https://github.com/your-username/eCommerce_dpei.git
 cd eCommerce_dpei
+Restore dependencies
 
-
-Install Dependencies:
+bash
+نسخ
+تحرير
 dotnet restore
+Configure the database
 
+Update appsettings.json with your DB connection string
 
-Configure Database:
+Apply migrations:
 
-Update the connection string in appsettings.json.
-Apply migrations to set up the database:dotnet ef migrations add InitialCreate
+bash
+نسخ
+تحرير
+dotnet ef migrations add InitialCreate
 dotnet ef database update
+Run the app
 
-
-
-
-Run the Application:
+bash
+نسخ
+تحرير
 dotnet run
+📡 API Base URL
+https://localhost:5001 or http://localhost:5000
 
+📚 API Endpoints Summary
+🔐 Authentication
+Method	Endpoint	Description
+POST	/api/auth/register/customer	Register a customer
+POST	/api/auth/login	Login and get JWT
+GET	/api/auth/me	Get logged-in user details
 
-API Base URL:
+📦 Products
+Method	Endpoint
+GET	/api/products?pageNumber=1&pageSize=10
+GET	/api/products/{id}
+POST	/api/products (Admin)
+PUT	/api/products/{id} (Admin)
+DELETE	/api/products/{id} (Admin)
+POST	/api/products/{productId}/images
+DELETE	/api/images/{imageId}
 
-The API will be available at https://localhost:5001 or http://localhost:5000 (depending on configuration).
+🗂️ Categories
+Method	Endpoint
+GET	/api/categories
+GET	/api/categories/{id}
+POST	/api/categories (Admin)
+PUT	/api/categories/{id} (Admin)
+DELETE	/api/categories/{id} (Admin)
 
+🛒 Cart
+Method	Endpoint
+POST	/api/cart
+GET	/api/cart
+PUT	/api/cart/{productId}
+DELETE	/api/cart/{productId}
 
+📬 Addresses
+Method	Endpoint
+GET	/api/address
+POST	/api/address
+PUT	/api/address/{id}
+DELETE	/api/address/{id}
+PUT	/api/address/{id}/default
 
-API Endpoints
-Below is a summary of the main API endpoints. All endpoints requiring authentication expect a JWT in the Authorization header (Bearer <token>).
-Authentication
+📦 Orders
+Method	Endpoint
+GET	/api/order
+GET	/api/order/{id}
+POST	/api/order
+PUT	/api/order/{id}/cancel
+GET	/api/order/admin?status=pending (Admin)
+PUT	/api/order/admin/{id}/status (Admin)
 
-POST /api/auth/register/customer: Register a new customer.
-POST /api/auth/login: Login and receive a JWT.
-GET /api/auth/me: Retrieve current user details (requires authentication).
+💳 Checkout
+Method	Endpoint
+GET	/api/checkout/cart-summary
+GET	/api/checkout/shipping-addresses
+POST	/api/checkout/process
 
-Products
+🔐 Security Highlights
+JWT: Authenticated access for protected routes
 
-GET /api/products?pageNumber=1&pageSize=10: List products with pagination.
-GET /api/products/{id}: Get a specific product.
-POST /api/products: Create a new product (Admin only).
-PUT /api/products/{id}: Update a product (Admin only).
-DELETE /api/products/{id}: Delete a product (Admin only).
-POST /api/products/{productId}/images: Add images to a product.
-DELETE /api/images/{imageId}: Delete a product image.
+BCrypt: Secure password storage
 
-Categories
+Role-Based Authorization: Admin-only restrictions
 
-GET /api/categories: List all categories.
-GET /api/categories/{id}: Get a specific category.
-POST /api/categories: Create a new category (Admin only).
-PUT /api/categories/{id}: Update a category (Admin only).
-DELETE /api/categories/{id}: Delete a category (Admin only).
+ValidatorFilter: Custom input validation middleware
 
-Cart
+🤝 Contributing
+Fork the repository
 
-POST /api/cart: Add an item to the cart.
-GET /api/cart: Get cart contents.
-PUT /api/cart/{productId}: Update cart item quantity.
-DELETE /api/cart/{productId}: Remove an item from the cart.
+Create your branch: git checkout -b feature/your-feature
 
-Orders
+Commit changes: git commit -m "Add your feature"
 
-GET /api/order: Get user orders.
-GET /api/order/{id}: Get a specific order.
-POST /api/order: Create a new order.
-PUT /api/order/{id}/cancel: Cancel an order.
-GET /api/order/admin?status=pending: Get all orders (Admin only).
-PUT /api/order/admin/{id}/status: Update order status (Admin only).
+Push to the branch: git push origin feature/your-feature
 
-Addresses
+Open a Pull Request
 
-GET /api/address: Get user addresses.
-POST /api/address: Add a new address.
-PUT /api/address/{id}: Update an address.
-DELETE /api/address/{id}: Delete an address.
-PUT /api/address/{id}/default: Set an address as default.
+📬 Contact
+For support or questions, reach out to:
+📧 osamaahmed52136@gmail.com
 
-Checkout
-
-GET /api/checkout/cart-summary: Get cart summary.
-GET /api/checkout/shipping-addresses: Get user addresses for checkout.
-POST /api/checkout/process: Process checkout and create an order.
-
-Security
-
-JWT Authentication: Ensures secure access to protected endpoints.
-BCrypt: Passwords are hashed before storage.
-Role-Based Authorization: Restricts certain endpoints to Admin users.
-Input Validation: Uses a custom ValidatorFilter to validate incoming requests.
-
-Contributing
-Contributions are welcome! Please follow these steps:
-
-Fork the repository.
-Create a new branch (git checkout -b feature/your-feature).
-Commit your changes (git commit -m "Add your feature").
-Push to the branch (git push origin feature/your-feature).
-Create a Pull Request.
-
-Contact
-For questions or support, please contact osamaahmed52136@gmail.com.
