@@ -1,57 +1,48 @@
-ECommerce API
+eCommerce_dpei API
 Overview
-The eCommerce_dpei API is a robust backend solution for an e-commerce platform built using ASP.NET Core. It provides comprehensive functionality for managing users, products, categories, carts, orders, addresses, and checkout processes. The API incorporates secure authentication and authorization using JWT (JSON Web Tokens) and password hashing with BCrypt. It also supports role-based access control, allowing differentiation between Customer and Admin roles.
+The eCommerce_dpei API is a robust backend solution for an e-commerce platform built using ASP.NET Core. It provides comprehensive functionality for managing users, products, categories, carts, orders, addresses, and checkout processes. The API incorporates secure authentication and authorization using JWT (JSON Web Tokens) and password hashing with BCrypt. It supports role-based access control, distinguishing between Customer and Admin roles.
 Features
-
-User Authentication & Authorization:
+User Authentication & Authorization
 
 Customer registration and login with JWT-based authentication.
-Role-based access (Customer and Admin).
+Role-based access for Customers and Admins.
 Secure password storage using BCrypt.
 Endpoint to retrieve current user details (GET /api/auth/me).
 
-
-Product Management:
+Product Management
 
 CRUD operations for products (GET, POST, PUT, DELETE).
 Pagination support for listing products (GET /api/products).
 Admin-only access for creating, updating, and deleting products.
 Product image management (POST /api/products/{productId}/images, DELETE /api/images/{imageId}).
 
-
-Category Management:
+Category Management
 
 CRUD operations for categories (GET, POST, PUT, DELETE).
 Admin-only access for creating, updating, and deleting categories.
 
-
-Cart Management:
+Cart Management
 
 Add, update, and remove items from the cart (POST, PUT, DELETE).
 Retrieve cart contents (GET /api/cart).
 Stock validation to prevent adding unavailable quantities.
 
-
-Order Management:
+Order Management
 
 Create and cancel orders (POST /api/order, PUT /api/order/{id}/cancel).
 Retrieve user orders or specific order details (GET /api/order, GET /api/order/{id}).
 Admin-only endpoints to view all orders and update order status (GET /api/order/admin, PUT /api/order/admin/{id}/status).
 Automatic stock updates upon order creation or cancellation.
 
-
-Address Management:
+Address Management
 
 CRUD operations for user addresses (GET, POST, PUT, DELETE).
 Set default address (PUT /api/address/{id}/default).
 
-
-Checkout Process:
+Checkout Process
 
 Retrieve cart summary and shipping addresses (GET /api/checkout/cart-summary, GET /api/checkout/shipping-addresses).
 Process checkout to create orders (POST /api/checkout/process).
-
-
 
 Technologies Used
 
@@ -110,7 +101,7 @@ Authentication
 
 POST /api/auth/register/customer: Register a new customer.
 POST /api/auth/login: Login and receive a JWT.
-GET /api/auth/me: Get details  Retrieve current user details (requires authentication).
+GET /api/auth/me: Retrieve current user details (requires authentication).
 
 Products
 
