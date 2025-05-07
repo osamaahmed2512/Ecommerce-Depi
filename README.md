@@ -176,7 +176,5 @@ Commit your changes (git commit -m "Add your feature").
 Push to the branch (git push origin feature/your-feature).
 Create a Pull Request.
 
-License
-This project is licensed under the MIT License.
 Contact
-For questions or support, please contact your-email@example.com.
+For questions or support, please contact osamaahmed52136@gmail.com.
