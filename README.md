@@ -1,52 +1,52 @@
 🛒 eCommerce_dpei Full-Stack Application (React + ASP.NET Core)
-eCommerce_dpei is a full-stack e-commerce platform combining a powerful React frontend and a secure ASP.NET Core backend API.
-It delivers complete functionalities for online shopping, admin controls, user authentication, and seamless order processing.
+eCommerce_dpei is a robust, full-stack e-commerce platform that integrates a modern React frontend with a secure and scalable ASP.NET Core backend API.
+This system provides comprehensive features for online shopping, user authentication, product management, order processing, and administrative control, ensuring a seamless and professional e-commerce experience.
 
-🚀 Features (Full Stack Overview)
+🚀 Key Features (Full Stack Overview)
 🔐 Authentication & Authorization
-Customer Registration & Login via JWT (React UI integrated with backend API).
+Customer registration and login using JWT tokens, integrated within the React frontend.
 
-Role-based access for Customers & Admins (secured backend, enforced in frontend UI).
+Role-based access control (RBAC) supporting Customers and Admins with secure enforcement in both frontend and backend layers.
 
-Secure password hashing with BCrypt (backend).
+Passwords are securely hashed using BCrypt.
 
-Retrieve current user info (GET /api/auth/me) and display in frontend profile/dashboard.
+Retrieve the current logged-in user profile via GET /api/auth/me and display it in the frontend dashboard.
 
 📦 Product & Category Management
-Products: Full CRUD from React Admin Panel, integrated with ASP.NET Core API.
+Complete CRUD operations on products directly from the React Admin Panel, fully integrated with the backend API.
 
-Categories: Manage categories from React Admin, using backend endpoints.
+Manage categories via React Admin, using the backend API.
 
-Pagination & Search: Browse products from frontend with pagination support.
+Pagination and search functionalities implemented in the frontend, communicating with the backend API.
 
-Product Images: Upload & delete images using React forms connected to backend.
+Product image upload and deletion using forms in React, interacting with the API.
 
-🛒 Cart, Checkout & Orders (Full Flow)
-Add, update, remove items from the cart (React UI).
+🛒 Cart, Checkout & Orders (Full Transaction Flow)
+Add, update, and remove items from the cart via the React UI.
 
-View live cart summary (React connected to backend APIs).
+Live cart summary display connected to backend APIs.
 
-Checkout process through frontend using API /api/checkout/process.
+End-to-end checkout process through the frontend using the /api/checkout/process endpoint.
 
-Stock validation and updates on the backend.
+Stock validation and updates are performed on the backend.
 
 Order creation and status management.
 
 📬 Address Management
-Add, edit, delete addresses (React UI).
+Manage addresses (add, edit, delete) through the React UI.
 
-Set default address (from React, using backend API).
+Set a default address using the backend API.
 
 💳 Checkout Process
-View cart summary & shipping addresses in frontend.
+View cart summaries and shipping addresses within the frontend UI.
 
-Process orders from React checkout page via backend API.
+Execute order processing through the backend API directly from the React checkout page.
 
 💻 Technologies Used (Full Stack)
-Layer	Technology
+Layer	Technologies
 Frontend (React)	React.js (Vite), Axios, React Context/Auth
 UI Styling	React Bootstrap, Ant Design (optional)
-State Management	Context API (Ready for Redux integration)
+State Management	Context API (with flexibility for Redux integration)
 Backend API	ASP.NET Core 6, JWT, BCrypt.Net
 Database	SQL Server + Entity Framework Core (EF Core)
 Architecture	Repository Pattern + Unit of Work (Backend)
@@ -54,14 +54,14 @@ File Upload	Multipart form-data (Backend)
 Data Mapping	AutoMapper (Backend)
 Validation	ValidatorFilter (Backend)
 
-📋 Prerequisites (Full Stack)
-.NET SDK: v6.0 or later.
+📋 Prerequisites
+.NET SDK version 6.0 or later.
 
-Node.js & npm (for frontend).
+Node.js and npm (for frontend development).
 
-SQL Server or compatible EF Core DB.
+SQL Server or any compatible EF Core-supported database.
 
-Setup backend appsettings.json with:
+Configuration of appsettings.json in the backend project with the following:
 
 Jwt:Key
 
@@ -69,58 +69,51 @@ Jwt:Issuer
 
 Jwt:Audience
 
-Database connection string
+Database Connection String
 
-⚙️ Setup Instructions (Full Stack)
-1️⃣ Clone the repository:
-bash
-نسخ
-تحرير
+⚙️ Setup Instructions
+1. Clone the Repository
+
+
 git clone https://github.com/your-username/eCommerce_dpei.git
 cd eCommerce_dpei
-2️⃣ Setup Backend (ASP.NET Core API)
-bash
-نسخ
-تحرير
+2. Backend Setup (ASP.NET Core API)
+
+
 cd backend
 dotnet restore
 dotnet ef database update
 dotnet run
-Runs at:
+Access the backend API at:
 
-arduino
-نسخ
-تحرير
 https://localhost:5001
+
 http://localhost:5000
-3️⃣ Setup Frontend (React.js)
-bash
-نسخ
-تحرير
+
+3. Frontend Setup (React.js)
+
+
+
 cd frontend
 npm install
 npm run dev
-Runs at:
+Access the frontend UI at:
 
-arduino
-نسخ
-تحرير
 http://localhost:5173
-Ensure React is configured to call backend at http://localhost:5000.
 
-📡 API Base URL (used by React frontend)
-arduino
-نسخ
-تحرير
+Ensure the React app is configured to call the backend API at http://localhost:5000.
+
+📡 API Base URL (Frontend Usage)
+
 http://localhost:5000
 📚 API Endpoints Summary
-🔐 Authentication
+Authentication
 Method	Endpoint	Description
-POST	/api/auth/register/customer	Register Customer
-POST	/api/auth/login	Login & Get JWT
-GET	/api/auth/me	Get logged-in user details
+POST	/api/auth/register/customer	Register a new customer
+POST	/api/auth/login	User login & JWT retrieval
+GET	/api/auth/me	Get the current user info
 
-📦 Products
+Products
 Method	Endpoint
 GET	/api/products?pageNumber=1&pageSize=10
 GET	/api/products/{id}
@@ -130,7 +123,7 @@ DELETE	/api/products/{id} (Admin)
 POST	/api/products/{productId}/images
 DELETE	/api/images/{imageId}
 
-🗂️ Categories
+Categories
 Method	Endpoint
 GET	/api/categories
 GET	/api/categories/{id}
@@ -138,14 +131,14 @@ POST	/api/categories (Admin)
 PUT	/api/categories/{id} (Admin)
 DELETE	/api/categories/{id} (Admin)
 
-🛒 Cart
+Cart
 Method	Endpoint
 POST	/api/cart
 GET	/api/cart
 PUT	/api/cart/{productId}
 DELETE	/api/cart/{productId}
 
-📬 Addresses
+Addresses
 Method	Endpoint
 GET	/api/address
 POST	/api/address
@@ -153,7 +146,7 @@ PUT	/api/address/{id}
 DELETE	/api/address/{id}
 PUT	/api/address/{id}/default
 
-📦 Orders
+Orders
 Method	Endpoint
 GET	/api/order
 GET	/api/order/{id}
@@ -162,43 +155,43 @@ PUT	/api/order/{id}/cancel
 GET	/api/order/admin?status=pending (Admin)
 PUT	/api/order/admin/{id}/status (Admin)
 
-💳 Checkout
+Checkout
 Method	Endpoint
 GET	/api/checkout/cart-summary
 GET	/api/checkout/shipping-addresses
 POST	/api/checkout/process
 
 🔐 Security Highlights
-JWT: Authenticated access between React & backend API.
+JWT tokens ensure secure communication between the frontend and backend API.
 
-BCrypt: Secure password storage.
+BCrypt is used for safe password hashing.
 
-Role-Based Authorization: Admin-only restrictions.
+Role-based authorization secures sensitive operations for Admins.
 
-ValidatorFilter: Custom input validation middleware (backend).
+Custom ValidatorFilter middleware is used for backend request validation.
 
 🌐 Full Stack User Flow Example
-User registers/login in React UI → Backend issues JWT.
+User registers or logs in via the React UI, receiving a JWT token from the backend.
 
-React saves JWT in local storage → used in all protected API calls.
+The JWT is saved in local storage and used in all protected API calls.
 
-User browses, adds products to cart in React UI → API /api/cart.
+Users browse products and add them to their cart via the React interface, calling the /api/cart endpoint.
 
-User checks out → React calls API /api/checkout/process.
+Users complete the checkout process by invoking the backend API at /api/checkout/process.
 
-Orders & stock managed by backend automatically.
+The backend handles stock management and order creation.
 
-Admin manages everything from React Admin Panel using backend APIs.
+Administrators manage products, categories, orders, and users from the React Admin Panel, using backend APIs.
 
-🤝 Contributing
-bash
-نسخ
-تحرير
+🤝 Contributing Guidelines
+
+
+
 git checkout -b feature/your-feature
 git commit -m "Add your feature"
 git push origin feature/your-feature
-Open a Pull Request.
+Please open a Pull Request for review and merging.
 
-📬 Contact
+📬 Contact Information
+For any inquiries, please contact:
 📧 osamaahmed52136@gmail.com
-
