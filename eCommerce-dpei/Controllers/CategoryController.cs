@@ -1,111 +1,59 @@
+using Ecommerce.Application.Dto;
+using Ecommerce.Application.Interfaces;
 using eCommerce_dpei.Filters;
-using eCommerce_dpei.Models;
-using eCommerce_dpei.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace eCommerce_dpei.Controllers
 {
-    [Route("api/categories")]
+    [Route("api/category")]
     [ApiController]
-    [ServiceFilter(typeof(ValidatorFilter))]
+    [Authorize(Roles ="Admin")]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _Repository;
+        private readonly ICategoryService _service;
 
-        public CategoryController(ICategoryRepository Repository)
+        public CategoryController(ICategoryService service)
         {
-            _Repository = Repository;
+            _service = service;
         }
 
         [HttpGet]
-        public  IActionResult GetAllCategories()
+        public  async Task<IActionResult> GetAllCategories()
         {
-            try
-            {
-                var categories = _Repository.GetAll();
-                if (categories == null)
-                {
-                    return NotFound("no categories found");
-                }
-                return Ok(categories); 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error getting categories: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+            var categories =await _service.GetAll();
+            return Ok(categories);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetCategory(int id)
-        {
-            try
-            {
-                var category = _Repository.Get(id);
-                if (category == null)
-                {
-                    return NotFound(new { Message = "Category not found" });
-                }
-                return Ok(category); 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error getting category: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+        public async Task<IActionResult> GetCategory(int id)
+        {   
+            var category =await _service.GetById(id);
+            return Ok(category);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryDto dto)
         {
-            try
-            {
-                var category =await _Repository.Create(dto);
-                return Ok(new { Message = "Category created successfully", CategoryId = category.Id });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error creating category: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+            await _service.Add(dto);
+            return Ok(new { Message = "Category created successfully" });
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")] 
+
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] CategoryDto dto)
         {
-            try
-            {
-                var success =await _Repository.Update(id,dto);
-                if (!success )
-                {
-                    return NotFound(new { Message = "Category not found" });
-                }
+          await  _service.Update(id, dto);
+            return Ok(new { Message = "Category Updated successfully" });
 
-                return Ok(new { Message = "Category updated successfully" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error updating category: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] 
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            try
-            {
-                var category =await _Repository.Delete(id);
-                if (category == null)
-                {
-                    return NotFound(new { Message = "Category not found" });
-                }
-                return Ok(new { Message = "Category deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error deleting category: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+            await _service.Delete(id);
+            return Ok(new { Message = "Category Deleted successfully" });
         }
     }
 }

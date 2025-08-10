@@ -1,120 +1,80 @@
-﻿using eCommerce_dpei.Data;
-using eCommerce_dpei.Filters;
-using eCommerce_dpei.Models;
-using eCommerce_dpei.Services;
+﻿using Ecommerce.Application.Dto;
+using Ecommerce.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace eCommerce_dpei.Controllers
+
+
+namespace ecommerce_dpei.controllers
 {
     [Route("api/products")]
     [ApiController]
-    [ServiceFilter(typeof(ValidatorFilter))]
-    public class ProductController : ControllerBase
+    [Authorize(Roles ="Admin")]
+    public class Productcontroller : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
-        public ProductController( IProductRepository productRepository)
+        private readonly IproductService _service;
+        public Productcontroller(IproductService Service)
         {
-            _productRepository = productRepository;
-        }
-
-        [HttpGet]
-        public IActionResult GetAllProducts([FromQuery] int pageNumber=1 ,[FromQuery] int pagesize =10)
-        {
-            try
-            {
-                var products = _productRepository.GetAllProducts(pageNumber,pagesize);
-                if (products == null) 
-                    return NotFound(" Product Not Found");
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error getting products: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+            _service = Service;
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProduct(int id)
+        public async Task<IActionResult> getproduct(int id)
         {
-            try
-            {
-                var product = _productRepository.GetProduct(id);
-                if (product == null)
-                {
-                    return NotFound(new { Message = "Product not found" });
-                }
-                return Ok(product); 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error getting product: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
 
-            }
+           var product= await _service.Get(id);
+
+            if (product == null) 
+                return NotFound(new {message= "Product Not Found" });
+            return Ok(product);
         }
 
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> CreateProduct([FromForm] ProductDto dto)
+        public async Task<IActionResult> createproduct([FromForm] ProductDto dto)
         {
-            try
-            {
-                if (!_productRepository.isCategoryExist(dto.CategoryId))
-                {
-                    return BadRequest(new { Message = "Invalid CategoryId: Category does not exist" });
-                }
-                var product =await _productRepository.CreateProduct(dto);
-                
-                return Ok(new { Message = "Product created successfully", ProductId = product.Id });
+                 await _service.Add(dto);
+                 return Ok("Added Successfully");
 
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error creating product: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDto dto)
+        public async Task<IActionResult> updateproduct(int id, [FromBody] Updateproductdto dto)
         {
-            try
-            {
-                var success = await _productRepository.UpdateProduct(id, dto);
+        
+             var result= await _service.update(id, dto);
+            if (!result.Success)
+                return NotFound(new { Message = result.Message });
 
-                if (!success) 
-                    return NotFound(new { Message = "Product not found or invalid category." });
-                return Ok(new { Message = "Product updated successfully" });
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error updating product: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+            return Ok(new { Message = result.Message });
         }
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")] 
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                var product =await _productRepository.DeleteProduct(id);
-                if (product == null)
-                {
-                    return NotFound(new { Message = "Product not found" });
-                }
+            var result =await _service.Delete(id);
+            if (!result.Success)
+                return NotFound(new { message = result.Message });
+            return Ok(new {message = result.Message});
+        }
+        [HttpPost("{id}")]        
+        public async Task<IActionResult> AddProductImage(int id,AddImageDto dto)
+        {
+            var result =await _service.Addimage(id, dto);
+            if(!result.Success)
+                return NotFound(new {message = result.Message});
+            return Ok(new {message = result.Message});
+        }
 
-                return Ok(new { Message = "Product deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Message = "Error deleting product: " + ex.Message + " | Inner: " + ex.InnerException?.Message });
-            }
+        [HttpDelete("{productid}/Image/{imageid}")]
+        public async Task<IActionResult> DeleteImage(int productid,int imageid)
+        {
+            var result = await _service.DeleteImage(productid, imageid);
+            if (!result.Success)
+                return NotFound(new { message = result.Message });
+            return Ok(new {message = result.Message});
         }
     }
 }

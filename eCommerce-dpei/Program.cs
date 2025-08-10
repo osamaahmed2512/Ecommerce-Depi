@@ -1,22 +1,22 @@
-using eCommerce_dpei.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.OpenApi.Models;
-using eCommerce_dpei.repository;
-using eCommerce_dpei.Models;
 using eCommerce_dpei.Filters;
-using eCommerce_dpei.Services; // Add this import
-//using Swashbuckle.AspNetCore.Filters; //not used
+using Ecommerce.infrastructure.percistence;
+using Ecommerce.infrastructure;
+using eCommerce_dpei.infrastructure.percistence;
+using Ecommerce.Application;
+using eCommerce_dpei.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Replace it with:
-builder.Services.AddControllers().
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ValidatorFilter>();
+}).
               ConfigureApiBehaviorOptions(options =>
               {
-                 options.SuppressModelStateInvalidFilter = true;
+                  options.SuppressModelStateInvalidFilter = true;
               }
                 )
     .AddJsonOptions(options =>
@@ -25,18 +25,10 @@ builder.Services.AddControllers().
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Add Entity Framework Core with SQL Server
-builder.Services.AddDbContext<EcommerceContext>(options =>
+builder.Services.AddDbContext<ApplcationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICartRepository, CartRepository>();
-builder.Services.AddScoped<ICheckoutRepository, CheckoutRepository>();
-builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
-builder.Services.AddAutoMapper(typeof(Program));
+
 // Configure CORS
 builder.Services.AddCors(options =>
 {
@@ -48,25 +40,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Configure JWT Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
-builder.Services.AddScoped<IAddressRepository, AddressRepository>();
+
+
 builder.Services.AddScoped<ValidatorFilter>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.InfrastructureRegisteration();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.ApplicationRegisterationService();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "eCommerce API", Version = "v1" });
@@ -99,15 +79,24 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+
+
 var app = builder.Build();
+app.UseDeveloperExceptionPage();
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "GraduationProject API v1");
+    c.RoutePrefix = string.Empty;
+});
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 // Apply CORS middleware before Authentication/Authorization
@@ -118,5 +107,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
-
+await DBSeeder.SeedDataAsync(app);
 app.Run();
