@@ -6,9 +6,7 @@ using Ecommerce.domain.constants;
 using Ecommerce.domain.entities;
 using Ecommerce.infrastructure.Identity;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -171,7 +169,7 @@ namespace Ecommerce.infrastructure.services
                     Username = existUser.UserName,
                     RefreshToken = RefreshToken,
                     ExpiredAt = DateTime.UtcNow.AddDays(7),
-                };
+                    };
                await _unitofwork.TokenRepository.Add(Ti);
             }
             else
