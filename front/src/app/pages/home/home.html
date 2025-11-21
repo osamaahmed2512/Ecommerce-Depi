@@ -1,0 +1,150 @@
+<main class="space-y-16 pb-20">
+    <section class="bg-brand-soft">
+        <div class="mx-auto grid max-w-6xl gap-10 px-4 py-16 lg:grid-cols-2 lg:items-center">
+            <div class="space-y-6">
+                <p class="text-4xl font-black leading-tight text-brand-dark md:text-5xl">
+                    Find clothes<br />
+                    that matches<br />
+                    your style
+                </p>
+                <p class="text-base text-brand-muted">
+                    Explore curated drops from iconic brands and upcoming designers. Everything you need to build the
+                    wardrobe you deserve.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <button type="button"
+                        class="rounded-full bg-brand-dark px-6 py-3 text-sm font-semibold text-white transition hover:bg-black"
+                        routerLink="/category">
+                        Shop the collection
+                    </button>
+                    <button type="button"
+                        class="rounded-full border border-brand-dark px-6 py-3 text-sm font-semibold text-brand-dark transition hover:bg-white"
+                        routerLink="/product/1">
+                        View product
+                    </button>
+                </div>
+                <div class="grid gap-6 sm:grid-cols-3">
+                    <div *ngFor="let stat of heroStats"
+                        class="rounded-2xl border border-white/40 bg-white/70 p-4 text-center backdrop-blur">
+                        <p class="text-2xl font-black text-brand-dark">{{ stat.value }}</p>
+                        <p class="text-xs text-brand-muted">{{ stat.label }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="relative overflow-hidden rounded-[40px] bg-gradient-to-br from-white to-slate-100 p-6">
+                    <img class="h-[420px] w-full rounded-[30px] object-cover"
+                        src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80"
+                        alt="Fashion models" />
+                    <div
+                        class="absolute left-6 top-6 rounded-full bg-white/80 px-4 py-2 text-xs font-semibold uppercase text-brand-dark shadow">
+                        Featured drop
+                    </div>
+                    <div class="absolute -bottom-6 left-6 rounded-3xl bg-white px-6 py-4 shadow-card">
+                        <p class="text-xs text-brand-muted">Trusted by</p>
+                        <p class="text-lg font-semibold text-brand-dark">30k+ stylish shoppers</p>
+                    </div>
+                    <div
+                        class="absolute -right-4 top-12 rounded-2xl bg-white px-4 py-3 text-xs text-brand-dark shadow-card">
+                        <p class="text-[11px] font-semibold uppercase tracking-wide text-brand-muted">Weekly drop</p>
+                        <p class="text-base font-semibold">New essentials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="border-y border-brand-stroke bg-white">
+        <div
+            class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-10 text-xs font-semibold tracking-[0.5em] text-brand-muted">
+            <span *ngFor="let logo of brandLogos" class="text-base uppercase tracking-[0.35em] text-slate-400">{{ logo
+                }}</span>
+        </div>
+    </section>
+
+    <section class="space-y-12 px-4">
+        <div class="mx-auto max-w-6xl space-y-12">
+            <app-product-shelf title="New Arrivals" description="Hand picked edits from our latest drop."
+                actionLabel="View All" [products]="newArrivals" />
+
+            <app-product-shelf title="Top Selling" description="Community favorites everyone is wearing right now."
+                actionLabel="Explore" [products]="topSelling" />
+        </div>
+    </section>
+
+    <section class="px-4">
+        <div class="mx-auto max-w-6xl rounded-[40px] bg-white p-8 shadow-card">
+            <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="text-2xl font-semibold text-brand-dark">Browse by dress style</p>
+                    <p class="text-sm text-brand-muted">Pick a vibe and start exploring</p>
+                </div>
+                <div class="flex gap-2 rounded-full border border-slate-200 bg-white p-1 text-sm">
+                    <button *ngFor="let style of dressStyles" type="button"
+                        class="rounded-full px-4 py-2 font-semibold transition"
+                        [ngClass]="style.name === selectedStyle() ? 'bg-brand-dark text-white' : 'text-brand-muted'"
+                        (click)="selectedStyle.set(style.name)">
+                        {{ style.name }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid gap-6 md:grid-cols-2">
+                <div *ngFor="let style of dressStyles" class="relative overflow-hidden rounded-[32px] p-6 shadow-sm"
+                    [ngClass]="['bg-gradient-to-br', style.accent]">
+                    <div class="space-y-3">
+                        <p class="text-sm text-brand-muted">Style</p>
+                        <h3 class="text-2xl font-semibold text-brand-dark">{{ style.name }}</h3>
+                        <a class="text-sm font-semibold text-brand-dark underline underline-offset-4" href="#">Explore
+                            looks</a>
+                    </div>
+                    <img class="mt-6 h-48 w-full rounded-[24px] object-cover" [src]="style.image" [alt]="style.name"
+                        loading="lazy" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4">
+        <div class="mx-auto max-w-6xl space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <p class="text-2xl font-semibold text-brand-dark">Our happy customers</p>
+                    <p class="text-sm text-brand-muted">Real reviews from our community</p>
+                </div>
+                <div class="flex gap-2 text-sm">
+                    <button type="button"
+                        class="inline-flex size-11 items-center justify-center rounded-full border border-slate-200 text-brand-dark">
+                        <span aria-hidden="true">‹</span>
+                    </button>
+                    <button type="button"
+                        class="inline-flex size-11 items-center justify-center rounded-full border border-slate-200 text-brand-dark">
+                        <span aria-hidden="true">›</span>
+                    </button>
+                </div>
+            </div>
+            <div class="grid gap-6 md:grid-cols-3">
+                <article *ngFor="let testimonial of testimonials"
+                    class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div class="mb-3 flex items-center gap-1 text-amber-400">
+                        <ng-container *ngFor="let filled of [1,2,3,4,5]; let idx = index">
+                            <svg class="size-4" viewBox="0 0 20 20" fill="currentColor"
+                                [class.text-slate-200]="idx + 1 > testimonial.rating">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </ng-container>
+                    </div>
+                    <p class="text-base text-brand-muted">{{ testimonial.content }}</p>
+                    <div class="mt-6">
+                        <p class="text-base font-semibold text-brand-dark">{{ testimonial.author }}</p>
+                        <p class="text-sm text-brand-muted">{{ testimonial.role }}</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <app-newsletter-banner />
+</main>

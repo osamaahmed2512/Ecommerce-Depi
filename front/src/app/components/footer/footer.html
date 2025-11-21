@@ -1,0 +1,56 @@
+<footer class="bg-brand-dark text-white">
+    <div class="max-w-6xl mx-auto px-4 py-16 space-y-12">
+        <div class="grid gap-10 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))]">
+            <div class="space-y-5">
+                <a class="text-3xl font-black tracking-tight" routerLink="/">SHOP.CO</a>
+                <p class="text-sm text-white/70 leading-relaxed">
+                    Find clothes that match your unique style. Shop curated drops from premium and emerging
+                    designers delivered right to your door.
+                </p>
+                <div class="flex items-center gap-3">
+                    <a class="inline-flex size-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition"
+                        href="#" aria-label="Instagram">
+                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M7 3h10a4 4 0 014 4v10a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4zm0 2a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2H7zm5 3.5a3.5 3.5 0 11-.001 7.001A3.5 3.5 0 0112 8.5zm0 2a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm4.75-2.75a.75.75 0 110 1.5.75.75 0 010-1.5z" />
+                        </svg>
+                    </a>
+                    <a class="inline-flex size-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition"
+                        href="#" aria-label="Twitter">
+                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M21 5.5a6.5 6.5 0 01-2.004.62A3.25 3.25 0 0016.5 4a3.25 3.25 0 00-3.167 4A9.22 9.22 0 013 5s-3 6 3 9a9 9 0 01-5 1c6 3.5 13 0 13-8a3.4 3.4 0 00-.06-.63A4.6 4.6 0 0021 5.5z" />
+                        </svg>
+                    </a>
+                    <a class="inline-flex size-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition"
+                        href="#" aria-label="Dribbble">
+                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2a10 10 0 100 20 10 10 0 000-20zm6.86 9.2h-.06a16.4 16.4 0 00-5.5-.3 24.2 24.2 0 00-.32-.6 16 16 0 004.8-4.23A8.02 8.02 0 0118.86 11.2zM15 5.06a14.5 14.5 0 01-4.17 3.6A44.7 44.7 0 007.4 3.94 8 8 0 0115 5.05zM5.1 5.9a42.4 42.4 0 013.3 4.7 37.2 37.2 0 00-5.42.57A8.04 8.04 0 015.1 5.9zm-2.2 6.5a35.8 35.8 0 016.26-.52c.14 0 .28 0 .43.01a54.2 54.2 0 012.06 5.4A7.98 7.98 0 012.9 12.4zm8.04 8.65a52.4 52.4 0 00-1.77-5.1 14.6 14.6 0 014.1.2 18.4 18.4 0 012.25 6.02 8.02 8.02 0 01-4.58-1.12zm6.83-.76a16.6 16.6 0 00-1.89-5.2 12.6 12.6 0 013.17.23 8 8 0 01-1.28 4.97z" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div *ngFor="let column of columns" class="space-y-4">
+                <p class="text-sm font-semibold uppercase tracking-widest text-white/70">{{ column.title }}</p>
+                <ul class="space-y-3 text-sm text-white/80">
+                    <li *ngFor="let link of column.links">
+                        <a class="transition hover:text-white" [href]="link.href">{{ link.label }}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4 border-t border-white/10 pt-6 text-sm text-white/70">
+            <p class="flex-1">© {{ currentYear }} SHOP.CO · All rights reserved.</p>
+            <div class="flex items-center gap-4">
+                <a class="hover:text-white" href="#">Privacy Policy</a>
+                <span class="size-1 rounded-full bg-white/30"></span>
+                <a class="hover:text-white" href="#">Terms</a>
+                <span class="size-1 rounded-full bg-white/30"></span>
+                <a class="hover:text-white" href="#">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>

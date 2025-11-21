@@ -17,4 +17,5 @@
 *.db
 
 /eCommerce-dpei/appsettings.json
+front/node_modules/
 

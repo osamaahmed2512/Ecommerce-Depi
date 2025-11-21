@@ -1,5 +1,4 @@
-﻿
-using Ecommerce.domain.constants;
+﻿using Ecommerce.domain.constants;
 using Ecommerce.infrastructure.Identity;
 using Ecommerce.infrastructure.percistence;
 using Microsoft.AspNetCore.Builder;
@@ -12,7 +11,7 @@ namespace eCommerce_dpei.infrastructure.percistence
 {
     public class DBSeeder
     {
-        public static async Task SeedDataAsync(IApplicationBuilder app)
+       public static async Task SeedDataAsync(IApplicationBuilder app)
         {
             using var scope = app.ApplicationServices.CreateScope();
 
@@ -41,10 +40,10 @@ namespace eCommerce_dpei.infrastructure.percistence
                         EmailConfirmed = true,
                         SecurityStamp = Guid.NewGuid().ToString(),
                     };
-                    if (!await RoleManger.RoleExistsAsync(Roles.Admin))
+                    if (!await RoleManger.RoleExistsAsync("Admin"))
                     {
                         var roleresult = await RoleManger.CreateAsync(new
-                            IdentityRole(Roles.Admin));
+                            IdentityRole("Admin"));
                         if (roleresult.Succeeded == false)
                         {
                             var roleerrors = roleresult.Errors.Select(e =>
@@ -54,6 +53,20 @@ namespace eCommerce_dpei.infrastructure.percistence
                             return;
                         }
                         logeer.LogInformation("Admin Role is Created");
+                    }
+                    if (!await RoleManger.RoleExistsAsync("Customer"))
+                    {
+                        var roleresult = await RoleManger.CreateAsync(new
+                            IdentityRole("Customer"));
+                        if (roleresult.Succeeded == false)
+                        {
+                            var roleerrors = roleresult.Errors.Select(e =>
+                            e.Description);
+                            logeer.LogError($"Failed to create user role. Errors : {string.Join(",", roleerrors)}");
+
+                            return;
+                        }
+                        logeer.LogInformation("Customer Role is Created");
                     }
                     var CreatedUserResult = await usermanger.
                     CreateAsync(user: user, password: "Admin123@");
@@ -84,5 +97,6 @@ namespace eCommerce_dpei.infrastructure.percistence
                 logeer.LogError(ex.Message);
             }
         }
+    
     }
 }

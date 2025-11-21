@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+    --font-sans: 'Sora', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: '"Integral CF"', 'Sora', system-ui, sans-serif;
+    --color-brand-dark: #1a1a1a;
+    --color-brand-muted: #4c4e57;
+    --color-brand-accent: #f97316;
+    --color-brand-stroke: #e5e7eb;
+    --color-brand-soft: #f2f0f1;
+}
+
+@layer base {
+    :root {
+        color: #111827;
+        background-color: #f2f4f7;
+        font-family: 'Sora', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+        @apply bg-slate-50 text-slate-900 antialiased;
+        min-height: 100vh;
+    }
+
+    ::selection {
+        @apply bg-brand-dark text-white;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .grid-auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    }
+}
